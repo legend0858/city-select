@@ -1,14 +1,6 @@
 # kuCity 城市选择jquery插件  
-
-插件截图
-----------
-
-![](http://7xi96x.com1.z0.glb.clouddn.com/kucity1.png)  
-![](http://7xi96x.com1.z0.glb.clouddn.com/kucity2.png)  
-![](http://7xi96x.com1.z0.glb.clouddn.com/kucity3.png)  
-![](http://7xi96x.com1.z0.glb.clouddn.com/kucity4.png)  
-
   
+
 插件特性
 ----------  
 1.单例  
@@ -28,3 +20,13 @@
 二，使用  
 
 `$('.search').kuCity();`
+
+
+插件截图
+----------
+
+![](http://7xi96x.com1.z0.glb.clouddn.com/kucity1.png)  
+![](http://7xi96x.com1.z0.glb.clouddn.com/kucity2.png)  
+![](http://7xi96x.com1.z0.glb.clouddn.com/kucity3.png)  
+![](http://7xi96x.com1.z0.glb.clouddn.com/kucity4.png)  
+
