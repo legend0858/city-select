@@ -1,9 +1,9 @@
-*{
+ul, li, dl, dd, dt, h1, h2, h3, p{
     margin:0;
     padding:0;
 }
 .kucity{
-    font-family: "微软雅黑";
+    font-family: "Helvetica Neue,Helvetica,Arial,PingFang SC,Hiragino Sans GB,WenQuanYi Micro Hei,Microsoft Yahei,sans-serif";
     font-size:12px;
     position: absolute;
     top:50px;

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>kuCity</title>
-    <link rel="stylesheet" href="kuCity.css">
+    <link rel="stylesheet" href="ku-city.css">
     <style>
     .search {
         margin: 50px;
@@ -14,7 +14,6 @@
         border-radius: 2px;
         width: 300px;
     }
-    
     .search2 {
         margin: 100px;
     }
@@ -24,12 +23,13 @@
 <body>
     <input type="text" class="search">
     <!-- <input type="text" class="search search2"> -->
-    <!-- <input type="text" class="search3"> -->
+    <input type="text" class="search3">
     <script src="http://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
-    <script src="kuCity.js"></script>
+    <script src="cities.js"></script>
+    <script src="ku-city.js"></script>
     <script>
     $('.search').kuCity();
-    // $('.search3').kuCity();
+    $('.search3').kuCity();
     </script>
 </body>
 
