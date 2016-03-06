@@ -24,8 +24,10 @@
             this.bindEvents(targets);
         },
         getBaseCities: function() {
+       		// 获取初始化插件的数据
+        	var url = 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php';
             return $.ajax({
-                url: 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php',
+                url: url,
                 type: 'get',
                 dataType: 'jsonp'
             });
