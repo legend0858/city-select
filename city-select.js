@@ -24,8 +24,8 @@
             this.bindEvents(targets);
         },
         getBaseCities: function() {
-       		// 获取初始化插件的数据
-        	var url = 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php';
+            // 获取初始化插件的数据
+            var url = 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php';
             return $.ajax({
                 url: url,
                 type: 'get',
@@ -37,16 +37,53 @@
         },
         showMain: function() {
             var _this = this;
-            if (this.domReady) {
-                this.getBaseCities().success(function(result) {
-                    _this.createMainDom(result);
+            if (!this.domReady) {
+                this.getBaseCities().success(function(res) {
+                    console.log(res.results)
+                    _this.createMainDom(res.results);
                     _this.domReady = true;
                 })
             }
         },
-        createMainDom: function(baseCiites) {
-        	var domContainer = $('<div class="kucity"><div>'),
-        		header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
+        createMainDom: function(cities) {
+            var itemLength = cities.length;
+
+            var domContainer = $('<div class="kucity"><div>'),
+                header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
+                tabContainer = $('<ul class="kucity_nav"></ul>'),
+                itemsContainer = $('<div class="kucity_body">'),
+                tabHtml = '';
+            for (var i = 0; i < itemLength; i++) {
+                tabHtml += '<li>' + cities[i].tabname + '</>';
+                createItems(cities[i], itemsContainer);
+            }
+            tabContainer.html(tabHtml);
+            tabContainer.find('li:first-child').addClass('active');
+            itemsContainer.find('div:first-child').addClass('active');
+            domContainer.append(header);
+            domContainer.append(tabContainer);
+            domContainer.append(itemsContainer)
+            $('body').append(domContainer)
+
+            function createItems(item, itemsContainer) {
+                var currentItem = $('<div class="kucity_item group">');
+                var tabdata = item.tabdata;
+                for (var i = 0; i < tabdata.length; i++) {
+                    var current = tabdata[i].dd;
+                    var dl = $('<dl>'),
+                        dt = '<dt>' + tabdata[i].dt + '</dt>',
+                        dd = $('<dd>'),
+                        str = '';
+                    for (var j = 0, jLen = current.length; j < jLen; j++) {
+                        str += '<span>' + current[j].cityName + '</span>'
+                    }
+
+                    dd.append(str);
+                    dl.append(dt).append(dd);
+                    currentItem.append(dl);
+                }
+                itemsContainer.append(currentItem);
+            }
 
         },
         createResutl: function() {
