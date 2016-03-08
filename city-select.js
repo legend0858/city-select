@@ -38,18 +38,22 @@
         showMain: function() {
             var _this = this;
             if (!this.domReady) {
+                this.showContainer();
                 this.getBaseCities().success(function(res) {
-                    console.log(res.results)
                     _this.createMainDom(res.results);
-                    _this.domReady = true;
                 })
+                _this.domReady = true;
+
             }
+           },
+        showContainer: function() {
+            var domContainer = this.domContainer = $('<div class="kucity"><div>');
+            $('body').append(domContainer)
         },
         createMainDom: function(cities) {
             var itemLength = cities.length;
 
-            var domContainer = $('<div class="kucity"><div>'),
-                header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
+            var header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
                 tabContainer = $('<ul class="kucity_nav"></ul>'),
                 itemsContainer = $('<div class="kucity_body">'),
                 tabHtml = '';
@@ -60,10 +64,9 @@
             tabContainer.html(tabHtml);
             tabContainer.find('li:first-child').addClass('active');
             itemsContainer.find('div:first-child').addClass('active');
-            domContainer.append(header);
-            domContainer.append(tabContainer);
-            domContainer.append(itemsContainer)
-            $('body').append(domContainer)
+            this.domContainer.append(header);
+            this.domContainer.append(tabContainer);
+            this.domContainer.append(itemsContainer)
 
             function createItems(item, itemsContainer) {
                 var currentItem = $('<div class="kucity_item group">');
@@ -77,26 +80,31 @@
                     for (var j = 0, jLen = current.length; j < jLen; j++) {
                         str += '<span>' + current[j].cityName + '</span>'
                     }
-
                     dd.append(str);
                     dl.append(dt).append(dd);
                     currentItem.append(dl);
                 }
                 itemsContainer.append(currentItem);
             }
-
         },
         createResutl: function() {
 
         },
         bindEvents: function(targets) {
             var _this = this;
-            $(targets).on('click', function() {
-                _this.showMain()
+            $(targets).on('click', function(e) {
+                _this.showMain();
+                _this.setPosition(e.target)
             })
         },
-        setPosition: function() {
-
+        setPosition: function(target) {
+            var $target = $(target),
+                top = $target.offset().top + $(window).scrollTop() + $target.outerHeight();
+            left = $target.offset().left + $(window).scrollLeft();
+            this.domContainer.animate({
+                top: top,
+                left: left
+            }, ' fast')
         }
     };
     var citySelectSingleProxy = (function() {
