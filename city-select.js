@@ -13,18 +13,48 @@
 
 (function($) {
     var CitySelect = function() {
-        this.targets = null;
+        this.$input = null;
         this.domReady = false;
         this.domContainer = null;
+        this.$currentInput = null;
     };
     CitySelect.prototype = {
         constructor: CitySelect,
-        init: function(targets) {
-            this.targets = targets;
-            this.bindEvents(targets);
+        // 初始化
+        init: function(input) {
+            this.$input = $(input);
+            this.bindInputClik(this.$input);
         },
-        getBaseCities: function() {
-            // 获取初始化插件的数据
+        // 注册点击事件
+        bindInputClik: function($input) {
+            var _this = this;
+            $input.on('click', function(e) {
+                _this.$currentInput = $(e.target);
+                _this.showMainDom();
+                _this.setPosition(_this.$currentInput)
+            })
+        },
+        // 注册tab切换事件
+        bindTabClick: function() {
+            this.tabNav.on('click', 'li', function(e) {
+                var current = $(e.target),
+                    index = current.index();
+                current.addClass('active').siblings().removeClass('active');
+                $('.kucity_item').eq(index).addClass('active').siblings().removeClass('active');
+                $(' .kucity_body').scrollTop(0);
+            })
+        },
+        // 注册城市选择事件
+        bindSelect: function() {
+            var _this = this;
+            this.tabsContainer.on('click', 'span', function(e) {
+                _this.$currentInput.val(($(e.target).text()));
+                _this.domContainer.hide();
+            })
+        },
+        // 获取常用城市数据(不常用就靠搜索)
+        getCommonCities: function() {
+            // 获取初始化插件的数据 (阿里的接口)
             var url = 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php';
             return $.ajax({
                 url: url,
@@ -32,43 +62,29 @@
                 dataType: 'jsonp'
             });
         },
-        getSearchResult: function() {
-
-        },
-        showMain: function() {
-            var _this = this;
-            if (!this.domReady) {
-                this.showContainer();
-                this.getBaseCities().success(function(res) {
-                    _this.createMainDom(res.results);
-                })
-                _this.domReady = true;
-
-            }
-           },
-        showContainer: function() {
-            var domContainer = this.domContainer = $('<div class="kucity"><div>');
-            $('body').append(domContainer)
-        },
+        // 检索
+        getSearchResult: function() {},
+        // 整体dom结构
         createMainDom: function(cities) {
             var itemLength = cities.length;
-
             var header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
-                tabContainer = $('<ul class="kucity_nav"></ul>'),
-                itemsContainer = $('<div class="kucity_body">'),
+                tabNav = this.tabNav = $('<ul class="kucity_nav"></ul>'),
+                tabsContainer = this.tabsContainer = $('<div class="kucity_body">'),
                 tabHtml = '';
             for (var i = 0; i < itemLength; i++) {
                 tabHtml += '<li>' + cities[i].tabname + '</>';
-                createItems(cities[i], itemsContainer);
+                createTabs(cities[i], tabsContainer);
             }
-            tabContainer.html(tabHtml);
-            tabContainer.find('li:first-child').addClass('active');
-            itemsContainer.find('div:first-child').addClass('active');
+            tabNav.html(tabHtml);
+            tabNav.find('li:first-child').addClass('active');
+            tabsContainer.find('div:first-child').addClass('active');
             this.domContainer.append(header);
-            this.domContainer.append(tabContainer);
-            this.domContainer.append(itemsContainer)
+            this.domContainer.append(tabNav);
+            this.domContainer.append(tabsContainer)
+            this.bindTabClick();
+            this.bindSelect();
 
-            function createItems(item, itemsContainer) {
+            function createTabs(item, tabsContainer) {
                 var currentItem = $('<div class="kucity_item group">');
                 var tabdata = item.tabdata;
                 for (var i = 0; i < tabdata.length; i++) {
@@ -84,38 +100,49 @@
                     dl.append(dt).append(dd);
                     currentItem.append(dl);
                 }
-                itemsContainer.append(currentItem);
+                tabsContainer.append(currentItem);
             }
         },
-        createResutl: function() {
-
+        // 搜索结果dom结构
+        createResutl: function() {},
+        // 显示加载
+        showContainer: function() {
+            var domContainer = this.domContainer = $('<div class="kucity"><div>');
+            $('body').append(domContainer)
         },
-        bindEvents: function(targets) {
+        // 获取城市之后显示城市
+        showMainDom: function() {
+            $(this.domContainer).fadeIn();
             var _this = this;
-            $(targets).on('click', function(e) {
-                _this.showMain();
-                _this.setPosition(e.target)
-            })
+            if (!this.domReady) {
+                this.showContainer();
+                this.getCommonCities().success(function(res) {
+                    _this.createMainDom(res.results);
+                })
+                _this.domReady = true;
+            }
         },
-        setPosition: function(target) {
-            var $target = $(target),
-                top = $target.offset().top + $(window).scrollTop() + $target.outerHeight();
+        // 设置面板位置
+        setPosition: function($target) {
+            var top = $target.offset().top + $(window).scrollTop() + $target.outerHeight() + 5;
             left = $target.offset().left + $(window).scrollLeft();
-            this.domContainer.animate({
+            this.domContainer.css({
                 top: top,
                 left: left
-            }, ' fast')
+            })
         }
     };
+    // 单例控制
     var citySelectSingleProxy = (function() {
         var instance = null;
-        return function(targets) {
+        return function(input) {
             if (!instance) {
                 instance = new CitySelect();
             }
-            instance.init(targets)
+            instance.init(input)
         }
     })();
+    // 在jquery对象上注册插件
     $.fn.citySelect = function() {
         citySelectSingleProxy(this);
     };
