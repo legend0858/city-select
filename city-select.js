@@ -15,7 +15,9 @@
     var CitySelect = function() {
         this.$input = null;
         this.domReady = false;
-        this.domContainer = null;
+        this.kucity = null
+        this.citybox = null;
+        this.result = null;
         this.$currentInput = null;
     };
     CitySelect.prototype = {
@@ -39,12 +41,13 @@
 
         // 注册tab切换事件
         bindTabClick: function() {
+            var _this = this;
             this.tabNav.on('click', 'li', function(e) {
                 var current = $(e.target),
                     index = current.index();
                 current.addClass('active').siblings().removeClass('active');
-                $('.kucity_item').eq(index).addClass('active').siblings().removeClass('active');
-                $(' .kucity_body').scrollTop(0);
+                _this.citybox.find('.kucity_item').eq(index).addClass('active').siblings().removeClass('active');
+                _this.citybox.find('.kucity_body').scrollTop(0);
             })
         },
 
@@ -53,12 +56,14 @@
             var _this = this;
             this.tabsContainer.on('click', 'span', function(e) {
                 _this.$currentInput.val(($(e.target).text()));
-                _this.domContainer.hide();
+                _this.kucity.hide();
             })
         },
 
         // 检索
-        getSearchResult: function() {},
+        getSearchResult: function() {
+
+        },
 
         // 整体dom结构
         createMainDom: function(cities) {
@@ -74,9 +79,9 @@
             tabNav.html(tabHtml);
             tabNav.find('li:first-child').addClass('active');
             tabsContainer.find('div:first-child').addClass('active');
-            this.domContainer.append(header);
-            this.domContainer.append(tabNav);
-            this.domContainer.append(tabsContainer);
+            this.citybox.append(header);
+            this.citybox.append(tabNav);
+            this.citybox.append(tabsContainer);
             this.bindTabClick();
             this.bindSelect();
 
@@ -93,17 +98,22 @@
         },
 
         // 搜索结果dom结构
-        createResutl: function() {},
+        createResult: function() {
+
+        },
 
         // 显示加载
         showContainer: function() {
-            var domContainer = this.domContainer = $('<div class="kucity"><div>');
-            $('body').append(domContainer)
+            var kucity = this.kucity = $('<div class="kucity"></div>');
+            var citybox = this.citybox = $('<div class="citybox"></div>');
+            var result = this.result = $('<ul class="result"></ul>');
+            kucity.append(citybox).append(result);
+            $('body').append(kucity);
         },
 
         // 获取城市之后显示城市
         showMainDom: function() {
-            $(this.domContainer).fadeIn();
+            $(this.kucity).fadeIn();
             var _this = this;
             if (!this.domReady) {
                 this.showContainer();
@@ -116,7 +126,7 @@
         setPosition: function($target) {
             var top = $target.offset().top + $(window).scrollTop() + $target.outerHeight() + 5;
             left = $target.offset().left + $(window).scrollLeft();
-            this.domContainer.css({
+            this.kucity.css({
                 top: top,
                 left: left
             })
