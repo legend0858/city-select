@@ -1,5 +1,5 @@
-/*
- * 城市选择jquer插件
+/**
+ * 城市选择jquery插件
  *
  * Licensed under the MIT license:
  * https://github.com/callmeJozo/city-select
@@ -20,11 +20,13 @@
     };
     CitySelect.prototype = {
         constructor: CitySelect,
+
         // 初始化
         init: function(input) {
             this.$input = $(input);
             this.bindInputClik(this.$input);
         },
+
         // 注册点击事件
         bindInputClik: function($input) {
             var _this = this;
@@ -34,6 +36,7 @@
                 _this.setPosition(_this.$currentInput)
             })
         },
+
         // 注册tab切换事件
         bindTabClick: function() {
             this.tabNav.on('click', 'li', function(e) {
@@ -44,6 +47,7 @@
                 $(' .kucity_body').scrollTop(0);
             })
         },
+
         // 注册城市选择事件
         bindSelect: function() {
             var _this = this;
@@ -52,18 +56,10 @@
                 _this.domContainer.hide();
             })
         },
-        // 获取常用城市数据(不常用就靠搜索)
-        getCommonCities: function() {
-            // 获取初始化插件的数据 (阿里的接口)
-            var url = 'https://www.alitrip.com/go/rgn/trip/chinahotcity_jsonp.php';
-            return $.ajax({
-                url: url,
-                type: 'get',
-                dataType: 'jsonp'
-            });
-        },
+
         // 检索
         getSearchResult: function() {},
+
         // 整体dom结构
         createMainDom: function(cities) {
             var itemLength = cities.length;
@@ -80,48 +76,42 @@
             tabsContainer.find('div:first-child').addClass('active');
             this.domContainer.append(header);
             this.domContainer.append(tabNav);
-            this.domContainer.append(tabsContainer)
+            this.domContainer.append(tabsContainer);
             this.bindTabClick();
             this.bindSelect();
 
             function createTabs(item, tabsContainer) {
                 var currentItem = $('<div class="kucity_item group">');
-                var tabdata = item.tabdata;
-                for (var i = 0; i < tabdata.length; i++) {
-                    var current = tabdata[i].dd;
-                    var dl = $('<dl>'),
-                        dt = '<dt>' + tabdata[i].dt + '</dt>',
-                        dd = $('<dd>'),
-                        str = '';
-                    for (var j = 0, jLen = current.length; j < jLen; j++) {
-                        str += '<span>' + current[j].cityName + '</span>'
-                    }
-                    dd.append(str);
-                    dl.append(dt).append(dd);
-                    currentItem.append(dl);
+                var current = item.tabdata;
+                var str = "";
+                for (var j = 0, jLen = current.length; j < jLen; j++) {
+                    str += '<span>' + current[j].cityName + '</span>'
                 }
+                currentItem.append(str);
                 tabsContainer.append(currentItem);
             }
         },
+
         // 搜索结果dom结构
         createResutl: function() {},
+
         // 显示加载
         showContainer: function() {
             var domContainer = this.domContainer = $('<div class="kucity"><div>');
             $('body').append(domContainer)
         },
+
         // 获取城市之后显示城市
         showMainDom: function() {
             $(this.domContainer).fadeIn();
             var _this = this;
             if (!this.domReady) {
                 this.showContainer();
-                this.getCommonCities().success(function(res) {
-                    _this.createMainDom(res.results);
-                })
+                _this.createMainDom(cityInfo);
                 _this.domReady = true;
             }
         },
+
         // 设置面板位置
         setPosition: function($target) {
             var top = $target.offset().top + $(window).scrollTop() + $target.outerHeight() + 5;
@@ -142,6 +132,7 @@
             instance.init(input)
         }
     })();
+
     // 在jquery对象上注册插件
     $.fn.citySelect = function() {
         citySelectSingleProxy(this);
