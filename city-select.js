@@ -21,6 +21,8 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         this.citybox = null;
         this.result = null;
         this.$currentInput = null;
+
+        var options = options || {};
         this.selectHandler = options.selectHandler || function(){};
     };
     CitySelect.prototype = {
@@ -87,7 +89,7 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
                 tabsContainer = this.tabsContainer = $('<div class="kucity_body">'),
                 tabHtml = '';
             for (var i = 0; i < itemLength; i++) {
-                tabHtml += '<li>' + cities[i].tabname + '</>';
+                tabHtml += '<li>' + cities[i].tabname + '</li>';
                 createTabs(cities[i], tabsContainer);
             }
             tabNav.html(tabHtml);
