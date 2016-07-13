@@ -14,13 +14,14 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
 var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=1439362066383_11337&lines=10&_input_charset=utf-8&needProvince=true&q=';
 
 (function($) {
-    var CitySelect = function() {
+    var CitySelect = function(options) {
         this.$input = null;
         this.domReady = false;
         this.kucity = null;
         this.citybox = null;
         this.result = null;
         this.$currentInput = null;
+        this.selectHandler = options.selectHandler || function(){};
     };
     CitySelect.prototype = {
         constructor: CitySelect,
@@ -41,7 +42,6 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
                 _this.$currentInput = $(e.target);
                 _this.showMainDom();
                 _this.setPosition(_this.$currentInput);
-                _this.bindResultClick();
             })
         },
 
@@ -52,6 +52,7 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
             if (!this.domReady) {
                 this.showContainer();
                 _this.createMainDom(cityInfo);
+                _this.bindResultClick();            //绑定搜索结果列表的事件,实在没地方放就扔这了
                 _this.domReady = true;
             }
         },
@@ -103,7 +104,7 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
                 var current = item.tabdata;
                 var str = "";
                 for (var j = 0, jLen = current.length; j < jLen; j++) {
-                    str += '<span>' + current[j].cityName + '</span>'
+                    str += '<span data-code="' + current[j].cityCode + '">' + current[j].cityName + '</span>'
                 }
                 currentItem.append(str);
                 tabsContainer.append(currentItem);
@@ -126,7 +127,10 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         bindSelect: function() {
             var _this = this;
             this.tabsContainer.on('click', 'span', function(e) {
-                _this.$currentInput.val(($(e.target).text()));
+                var name = $(e.target).text();
+                var code = $(e.target).data("code");
+                _this.$currentInput.val(name);
+                _this.selectHandler(name,code);
                 _this.kucity.hide();
             })
         },
@@ -163,7 +167,7 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
                     type: 'get',
                     dataType: 'jsonp'
                 }).done(function (re) {
-                    _this.createResult(re);
+                    _this.createResult(re,value);
                 })
             } else {
                 this.triggleShow(true);
@@ -182,7 +186,7 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         },
 
         // 搜索结果dom结构
-        createResult: function(re) {
+        createResult: function(re,value) {
             var result = re.result,
                 len = result.length,
                 str = '';
@@ -199,7 +203,10 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         bindResultClick: function(){
             var _this = this;
             this.result.on('click', 'li', function() {
-                _this.$currentInput.val($(this).find('.name').text());
+                var name = $(this).find('.name').text();
+                var code = $(this).find(".letter").text();
+                _this.$currentInput.val(name);
+                _this.selectHandler(name,code);
                 _this.kucity.hide();
             })
         }
@@ -208,20 +215,11 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         //TODO
 
     };
-    // 单例控制
-    var citySelectSingleProxy = (function() {
-        var instance = null;
-        return function(input) {
-            if (!instance) {
-                instance = new CitySelect();
-            }
-            instance.init(input)
-        }
-    })();
 
     // 在jquery对象上注册插件
-    $.fn.citySelect = function() {
-        citySelectSingleProxy(this);
+    $.fn.citySelect = function(options) {
+        var instance = new CitySelect(options);
+        instance.init(this);
     };
 
 })(jQuery);
