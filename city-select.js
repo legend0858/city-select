@@ -20,10 +20,11 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         this.kucity = null;
         this.citybox = null;
         this.result = null;
+        this.resultLiNum = -1;
         this.$currentInput = null;
 
         var options = options || {};
-        this.selectHandler = options.selectHandler || function(){};
+        this.selectHandler = options.selectHandler || this.defaultHandler;
     };
     CitySelect.prototype = {
         constructor: CitySelect,
@@ -33,12 +34,12 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         // 初始化
         init: function(input) {
             this.$input = $(input);
-            this.bindInputClik(this.$input);
+            this.bindInputClick(this.$input);
             this.bindInputKeyup(this.$input);
         },
 
         // 注册点击事件
-        bindInputClik: function($input) {
+        bindInputClick: function($input) {
             var _this = this;
             $input.on('click', function(e) {
                 _this.$currentInput = $(e.target);
@@ -54,7 +55,9 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
             if (!this.domReady) {
                 this.showContainer();
                 _this.createMainDom(cityInfo);
-                _this.bindResultClick();            //绑定搜索结果列表的事件,实在没地方放就扔这了
+                _this.bindResultClick();            //绑定搜索结果列表的事件
+                _this.bindResultKeyboard();         //搜索列表键盘事件
+                _this.bindHideClick();              //点击屏幕隐藏
                 _this.domReady = true;
             }
         },
@@ -131,7 +134,6 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
             this.tabsContainer.on('click', 'span', function(e) {
                 var name = $(e.target).text();
                 var code = $(e.target).data("code");
-                _this.$currentInput.val(name);
                 _this.selectHandler(name,code);
                 _this.kucity.hide();
             })
@@ -144,6 +146,8 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         bindInputKeyup: function($input) {
             var _this = this;
             $input.on('keyup', function(e) {
+                var key = e.keyCode;
+                if(key === 40 || key === 38 || key === 13) return;
                 _this.$currentInput = $(e.target);
                 _this.throttle(_this.getSearchResult, _this);
             })
@@ -196,21 +200,82 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
                 for (var i = 0; i < len; i++) {
                     str += '<li><span class="name">' + result[i].name + '</span><span class="letter">' + result[i].cityCode + '</span></li>';
                 }
-                this.result.html('').html(str).find('li').eq(0).addClass('active');
+                this.result.html('').html(str);
+                this.resultLiNum = 0;
+                this.chooseResultLi();
             } else {
                 this.result.html('<li>没有找到<span class="noresult">' + value + '</span>相关信息</li>');
+                this.resultLiNum = -1;
             }
         },
 
+        // 搜索列表点击事件
         bindResultClick: function(){
             var _this = this;
             this.result.on('click', 'li', function() {
-                var name = $(this).find('.name').text();
-                var code = $(this).find(".letter").text();
-                _this.$currentInput.val(name);
-                _this.selectHandler(name,code);
+                _this.selectResultLi(this);
+            })
+        },
+
+        // 搜索列表键盘事件
+        bindResultKeyboard: function(){
+            var _this = this;
+            this.$input.on('keyup', function(event) {
+                var keycode = event.keyCode;
+                if(_this.result.is(":hidden") || _this.resultLiNum === -1) return;
+
+                var $Li = $("li",_this.result);
+                var len = $Li.length;
+
+                switch(keycode){
+                    case 40: //向下箭头↓
+                        _this.resultLiNum++;
+                        if(_this.resultLiNum > len - 1) _this.resultLiNum = 0;
+                        _this.chooseResultLi();
+                        break;
+                    case 38: //向上箭头↑
+                        _this.resultLiNum--;
+                        if(_this.resultLiNum < 0) _this.resultLiNum = len - 1;
+                        _this.chooseResultLi();
+                        break;
+                    case 13: // enter键
+                        _this.selectResultLi($Li.eq(_this.resultLiNum));
+                        break;
+                    default:
+                        break;
+                }
+            })
+        },
+
+        chooseResultLi: function(){
+            var num = this.resultLiNum;
+            var $Li = $("li",this.result);
+            $Li.eq(num).addClass("active").siblings().removeClass("active");
+        },
+
+        selectResultLi: function(li){
+            var name = $(li).find('.name').text();
+            var code = $(li).find(".letter").text();
+            this.selectHandler(name,code);
+            this.kucity.hide();
+        },
+
+        // 点击文档隐藏kucity
+        bindHideClick: function(){
+            var _this = this;
+            $(document).click(function(event){
+                if(event.target === _this.$input.get(0) || isChildOrSelf(event.target,_this.kucity)) return false;
                 _this.kucity.hide();
             })
+
+            function isChildOrSelf(child,$parent){
+                return child === $parent.get(0) || $(child).parents($parent).length > 0;
+            }
+        },
+
+        // 默认回调函数
+        defaultHandler: function(name,code){
+            this.$currentInput.val(name);
         }
 
         /**************************** 历史城市记录功能 ****************************/
