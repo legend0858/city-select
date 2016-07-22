@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="css/ku-city.css">
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/city-info.js"></script>
+    <script src="js/city-select.js"></script>
+    <script src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>
+
+    <title>angular城市选择指令</title>
+</head>
+<body>
+<form class="query-form form-inline" ng-submit="vm.doSearch()" ng-controller="queryCtrl">
+    <h3 class="query-title">国际机票查询</h3>
+    <div class="row radio-row">
+        <div class="col-md-12">
+            <label class="radio-inline">
+                <input type="radio" name="flightType" ng-model="vm.search.flightType" value="1">
+                单程
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="flightType" ng-model="vm.search.flightType" value="2">
+                往返程
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group" style="position:relative;">
+                <label for="takeOffCity">出发城市：</label>
+                <input type="text" class="form-control" name="takeOffCity" id="takeOffCity" code-model="vm.search.takeOffCity" placeholder="出发城市" ku-city ng-model="vm.takeOffCityName">
+                <a href="javascript:;" class="changeCityBtn">换</a>
+            </div>
+            <div class="form-group">
+                <label for="arriveCity">到达城市：</label>
+                <input type="text" class="form-control" name="arriveCity" id="arriveCity" code-model="vm.search.arriveCity" placeholder="到达城市" ku-city ng-model="vm.arriveCityName">
+            </div>
+            <div class="form-group">
+                <label for="cabinType">舱位类型：</label>
+                <select class="form-control" name="cabinType" id="cabinType" ng-model="vm.search.cabinType" style="width:211px;">
+                    <option value="">请选择</option>
+                    <option value="F|C|Y">全部舱位</option>
+                    <option value="ECONOMY">经济舱</option>
+                    <option value="BUSINESS">商务舱</option>
+                    <option value="FIRST">头等舱</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group" style="position:relative">
+                <!--<flight-date id="takeOffDate" placeholder="出发日期" model="vm.search.takeOffDate"></flight-date>-->
+                <label for="takeOffDate">出发日期：</label>
+                <input type="text" ui-date="vm.dateOptions1" class="form-control" name="takeOffDate" id="takeOffDate" ng-model="vm.search.takeOffDate" placeholder="出发日期">
+                <span class="day">{{takeOffDay}}</span>
+            </div>
+            <div class="form-group" style="position:relative">
+                <label for="returnDate">返程日期：</label>
+                <input type="text" ui-date="vm.dateOptions2" class="form-control" name="returnDate" id="returnDate" ng-model="vm.search.returnDate" placeholder="到达日期">
+                <span class="day">{{returnDay}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row btn-row">
+        <div class="col-md-4 col-md-offset-4">
+            <button type="button" ng-click="vm.showValue()">查看ngModel</button>
+            <button type="submit" class="btn btn-warning btn-lg btn-block">立即搜索</button>
+        </div>
+    </div>
+</form>
+<script>
+    var app = angular.module("myApp",[]);
+    app.controller("queryCtrl",function($scope){
+
+        var vm = $scope.vm = {};
+        vm.search = {};
+        vm.search.flightType = "1";
+
+        vm.doSearch = function(){
+            var search = angular.extend(vm.search,{
+                takeOffDate:$filter("date")(vm.search.takeOffDate,"yyyy-MM-dd"),
+                returnDate:$filter("date")(vm.search.returnDate,"yyyy-MM-dd")
+            });
+            if(vm.search.flightType === "1"){
+                $location.path("owList").search(search);
+            }
+            else if(vm.search.flightType === "2"){
+                $location.path("rtList").search(search);
+            }
+            return false;
+        };
+
+        vm.showValue = function(){
+            console.log(vm.takeOffCityName,vm.arriveCityName);
+        };
+
+        vm.stopkeydown = function(){
+            return false;
+        };
+    })
+</script>
+<script src="js/ngCity.js"></script>
+</body>
+</html>

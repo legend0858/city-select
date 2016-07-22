@@ -11,7 +11,6 @@
  */
 
 var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=1467963682760_2060&_input_charset=utf-8&userInput=";
-var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=1439362066383_11337&lines=10&_input_charset=utf-8&needProvince=true&q=';
 
 (function($) {
     var CitySelect = function(options) {
@@ -220,13 +219,13 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         // 搜索列表键盘事件
         bindResultKeyboard: function(){
             var _this = this;
-            this.$input.on('keyup', function(event) {
+            this.$input.on('keydown', function(event) {
                 var keycode = event.keyCode;
-                if(_this.result.is(":hidden") || _this.resultLiNum === -1) return;
+                if(keycode === 13){event.preventDefault()}
 
+                if(_this.result.is(":hidden") || _this.resultLiNum === -1) return;
                 var $Li = $("li",_this.result);
                 var len = $Li.length;
-
                 switch(keycode){
                     case 40: //向下箭头↓
                         _this.resultLiNum++;
@@ -264,12 +263,12 @@ var search_api_url1 = 'https://sjipiao.alitrip.com/city_search.do?_ksTS=14393620
         bindHideClick: function(){
             var _this = this;
             $(document).click(function(event){
-                if(event.target === _this.$input.get(0) || isChildOrSelf(event.target,_this.kucity)) return false;
+                if(event.target === _this.$input.get(0) || isChildOrSelf(event.target,_this.kucity)) return;
                 _this.kucity.hide();
             })
 
             function isChildOrSelf(child,$parent){
-                return child === $parent.get(0) || $(child).parents($parent).length > 0;
+                return child === $parent.get(0) || $(child).closest($parent).length > 0;
             }
         },
 
