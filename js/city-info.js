@@ -5,7 +5,7 @@
 
 var cityInfo = [
     {
-        'tabname': '热门城市',
+        'tabname': '国内城市',
         'tabdata': [
             {'cityName': '北京', 'cityCode': 'BJS'},
             {'cityName': '上海', 'cityCode': 'SHA'},

@@ -30,12 +30,12 @@
         <div class="col-md-6">
             <div class="form-group" style="position:relative;">
                 <label for="takeOffCity">出发城市：</label>
-                <input type="text" class="form-control" name="takeOffCity" id="takeOffCity" code-model="vm.search.takeOffCity" placeholder="出发城市" ku-city ng-model="vm.takeOffCityName">
+                <input type="text" class="form-control" name="takeOffCity" id="takeOffCity" select-handler="vm.selectFunc1" code-model="vm.search.takeOffCity" placeholder="出发城市" ku-city ng-model="vm.takeOffCityName">
                 <a href="javascript:;" class="changeCityBtn">换</a>
             </div>
             <div class="form-group">
                 <label for="arriveCity">到达城市：</label>
-                <input type="text" class="form-control" name="arriveCity" id="arriveCity" code-model="vm.search.arriveCity" placeholder="到达城市" ku-city ng-model="vm.arriveCityName">
+                <input type="text" class="form-control" name="arriveCity" id="arriveCity" select-handler="vm.selectFunc2" code-model="vm.search.arriveCity" placeholder="到达城市" ku-city ng-model="vm.arriveCityName">
             </div>
             <div class="form-group">
                 <label for="cabinType">舱位类型：</label>
@@ -77,6 +77,10 @@
         vm.search = {};
         vm.search.flightType = "1";
 
+        vm.selectFunc1 = function(a,b){
+            console.log(a,b);
+        };
+
         vm.doSearch = function(){
             var search = angular.extend(vm.search,{
                 takeOffDate:$filter("date")(vm.search.takeOffDate,"yyyy-MM-dd"),
@@ -93,10 +97,6 @@
 
         vm.showValue = function(){
             console.log(vm.takeOffCityName,vm.arriveCityName);
-        };
-
-        vm.stopkeydown = function(){
-            return false;
         };
     })
 </script>

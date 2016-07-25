@@ -72,8 +72,8 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
 
         // 设置面板位置
         setPosition: function($target) {
-            var top = $target.offset().top + $(window).scrollTop() + $target.outerHeight() + 1;
-            var left = $target.offset().left + $(window).scrollLeft();
+            var top = $target.offset().top + $target.outerHeight() + 1;
+            var left = $target.offset().left;
             this.kucity.css({
                 top: top,
                 left: left
@@ -86,7 +86,7 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
         // 整体dom结构
         createMainDom: function(cities) {
             var itemLength = cities.length;
-            var header = $('<h3 class="kucity_header">热门城市(支持汉字/拼音搜索)</h3>'),
+            var header = $('<h3 class="kucity_header">支持汉字/拼音搜索</h3>'),
                 tabNav = this.tabNav = $('<ul class="kucity_nav"></ul>'),
                 tabsContainer = this.tabsContainer = $('<div class="kucity_body">'),
                 tabHtml = '';
