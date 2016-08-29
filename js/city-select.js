@@ -6,7 +6,8 @@
  *
  * Author: Naraku(http://segmentfault.com/u/naraku_)
  *
- * Version:  1.0.1  2016-01-14
+ * Version:  2.0.1  2016-08-29
+ * modify:  liuyue
  *
  */
 
@@ -56,6 +57,7 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
                 _this.createMainDom(cityInfo);
                 _this.bindResultClick();            //绑定搜索结果列表的事件
                 _this.bindResultKeyboard();         //搜索列表键盘事件
+                _this.bindResultBlur();             //失去焦点后自动选择第一个
                 _this.bindHideClick();              //点击屏幕隐藏
                 _this.domReady = true;
             }
@@ -216,10 +218,19 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
             })
         },
 
+        // 失去焦点事件
+        bindResultBlur: function(){
+            var _this = this;
+            this.$currentInput.on('blur', function(event) {
+                if(_this.result.is(":hidden") || _this.resultLiNum === -1) return;
+                _this.selectResultLi($("li",_this.result).eq(0));
+            })
+        },
+
         // 搜索列表键盘事件
         bindResultKeyboard: function(){
             var _this = this;
-            this.$input.on('keydown', function(event) {
+            this.$currentInput.on('keydown', function(event) {
                 var keycode = event.keyCode;
                 if(keycode === 13){event.preventDefault()}
 
