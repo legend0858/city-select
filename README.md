@@ -17,7 +17,7 @@
 `<script src="http://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>`
 `<script src="kuCity.js"></script>`
 
-二，使用  
+二，修改使用  
 
 `$('.search').kuCity();`
 ------------------------
@@ -29,11 +29,11 @@
 ## city-select结合angular的使用说明
 ----
 一，依赖的插件（jquery,angular）
-       css:
+   * css:
      `<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.css">`
      `<link rel="stylesheet" href="../../css/ku-city.css">` 
-        js:
-     `<script src="../../js/lib/jquery.min.js"></script>`
+   * js:
+     `<script srcgit="../../js/lib/jquery.min.js"></script>`
      `<script src="../../js/city-info.js"></script>`
      `<script src="../../js/city-select.js"></script>`
      `<script src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>`
@@ -42,12 +42,14 @@
     修改后说明：
           1.在封装的js中添加自定义函数citySelect（在angular中触发函数进行操作）
           2.添加setName属性（是否赋值value避免两次赋值冲突）
-             `angular.element(elem).citySelect({`
-                          `setName:false`
-                        ` }).on("citySelect",function(event,name,code){`
-                                 ` ngModel.$setViewValue(name);`
-                                    ` ngModel.$render();`
-             ` })`
+          ```
+           angular.element(elem).citySelect({
+                           setName:false
+                       }).on("citySelect",function(event,name,code){
+                           ngModel.$setViewValue(name);
+                           ngModel.$render();
+                       })
+           ```
                
  
 
