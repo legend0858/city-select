@@ -22,9 +22,9 @@
  ```
     
 二，使用(ng-model的应用)
-    修改后说明：
-          1.在封装的js中添加自定义函数citySelect（在angular中触发函数进行操作）
-          2.添加setName属性（是否赋值value,避免两次赋值冲突）
+    修改后说明：<br/>
+          1.在封装的js中添加自定义函数citySelect（在angular中触发函数进行操作）<br/>
+          2.添加setName属性（是否赋值value,避免两次赋值冲突）<br/>
 ```python
 angular.module("myApp").directive("kuCity",function() {
     return {
