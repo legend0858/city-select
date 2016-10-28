@@ -32,11 +32,15 @@
     <script src="js/city-info.js"></script>
     <script src="js/city-select.js"></script>
     <script>
-    $('.city-select').citySelect();
+    $('.city-select').citySelect().on("citySelect",function(event,name,code){
+        console.log(name,code);
+    });
+
     $('.city-select-two').citySelect({
         selectHandler:function(name,code){
             console.log("222",name,code);
-        }
+        },
+        setName:false
     })
     </script>
 </body>

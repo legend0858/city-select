@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue城市选择控件调研<title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
+</head>
+<body>
+<div id="div1">
+    <input type="text" ng-model="cityCode" ku-city placeholder="城市选择控件">
+    <button type="button" ng-click="showInfo()">显示</button>
+</div>
+<script>
+    new Vue({
+        el:"div1"
+    })
+</script>
+</body>
+</html>

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.css">
-    <link rel="stylesheet" href="css/ku-city.css">
-    <script src="js/lib/jquery.min.js"></script>
-    <script src="js/city-info.js"></script>
-    <script src="js/city-select.js"></script>
+    <link rel="stylesheet" href="../../css/ku-city.css">
+    <script src="../../js/lib/jquery.min.js"></script>
+    <script src="../../js/city-info.js"></script>
+    <script src="../../js/city-select.js"></script>
     <script src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>
 
     <title>angular城市选择指令</title>
@@ -65,20 +65,21 @@
     <div class="row btn-row">
         <div class="col-md-4 col-md-offset-4">
             <button type="button" ng-click="vm.showValue()">查看ngModel</button>
-            <button type="submit" class="btn btn-warning btn-lg btn-block">立即搜索</button>
+            <button type="button" ng-click="vm.switchCity()">交换城市</button>
+            <button type="submit" class="btn btn-warning btn-block">立即搜索</button>
         </div>
     </div>
 </form>
 <script>
     var app = angular.module("myApp",[]);
-    app.controller("queryCtrl",function($scope){
+    app.controller("queryCtrl",function($scope,$filter){
 
         var vm = $scope.vm = {};
         vm.search = {};
         vm.search.flightType = "1";
 
-        vm.selectFunc1 = function(a,b){
-            console.log(a,b);
+        vm.selectFunc1 = function(name,code){
+            console.log("回调函数1",name,code);
         };
 
         vm.doSearch = function(){
@@ -98,8 +99,14 @@
         vm.showValue = function(){
             console.log(vm.takeOffCityName,vm.arriveCityName);
         };
+
+        vm.switchCity = function(){
+            var temp = vm.takeOffCityName;
+            vm.takeOffCityName = vm.arriveCityName;
+            vm.arriveCityName = temp;
+        };
     })
 </script>
-<script src="js/ngCity.js"></script>
+<script src="ngCity.js"></script>
 </body>
 </html>

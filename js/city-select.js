@@ -24,7 +24,8 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
         this.$currentInput = null;
 
         var options = options || {};
-        this.selectHandler = options.selectHandler || this.defaultHandler;
+        this.selectHandler = options.selectHandler;
+        this.setName = options.setName === undefined ? true : options.setName;             // 是否设置城市名称
     };
     CitySelect.prototype = {
         constructor: CitySelect,
@@ -135,7 +136,9 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
             this.tabsContainer.on('click', 'span', function(e) {
                 var name = $(e.target).text();
                 var code = $(e.target).data("code");
-                _this.selectHandler(name,code);
+                _this.setName && _this.$currentInput.val(name);
+                _this.$currentInput.trigger("citySelect",[name,code]);
+                _this.selectHandler && _this.selectHandler(name,code);
                 _this.kucity.hide();
             })
         },
@@ -266,7 +269,9 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
         selectResultLi: function(li){
             var name = $(li).find('.name').text();
             var code = $(li).find(".letter").text();
-            this.selectHandler(name,code);
+            this.setName && this.$currentInput.val(name);
+            this.$currentInput.trigger("citySelect",[name,code]);
+            this.selectHandler && this.selectHandler(name,code);
             this.kucity.hide();
         },
 
@@ -283,11 +288,6 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
             }
         },
 
-        // 默认回调函数
-        defaultHandler: function(name,code){
-            this.$currentInput.val(name);
-        }
-
         /**************************** 历史城市记录功能 ****************************/
         //TODO
 
@@ -297,6 +297,7 @@ var search_api_url = "https://sijipiao.alitrip.com/ie/auto_complete.do?_ksTS=146
     $.fn.citySelect = function(options) {
         var instance = new CitySelect(options);
         instance.init(this);
+        return this;
     };
 
 })(jQuery);
