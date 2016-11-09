@@ -18,11 +18,7 @@
     <city-select :select-handler="arrSelectHandler" :source.sync="search.takeOnCityName" id="takeOnCityName" title="选择到达城市" ></city-select>{{takeOnCityName}}
     <button v-on:click="changeCity">交换</button>
 </div>
-
 <script>
-
-
-
     var citySelt = Vue.extend({
         template: '<input type="text" placeholder={{title}} v-model="source" title={{title}}>',
         props:{
@@ -63,7 +59,6 @@
         },
         methods: {
             deptSelectHandler:function (name,code) {
-                this.source = name;
                 this.search.takeOffCityName = name;
                 this.search.takeOffCityCode = code;
 
@@ -71,8 +66,6 @@
             arrSelectHandler:function (name,code) {
                 this.search.takeOnCityName = name;
                 this.search.takeOnCityCode = code;
-                this.source = name;
-
             },
             changeCity:function () {
                 var temp =  this.search.takeOffCityName;
