@@ -43,7 +43,6 @@ angular.module("myApp").directive("kuCity",function() {
 
 ```
 ## city-select结合vuejs的使用说明 
-## city-select结合angular的使用说明
 ----
 一，依赖的插件（jquery,vuejs）
   >* css:    
