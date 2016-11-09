@@ -13,9 +13,9 @@
 <body>
 <div id="demo">
     <span>出发城市：</span>
-    <city-select :select-handler="deptSelectHandler" :search="search" id="takeOffCityName" title="选择出发城市" ></city-select>{{takeOffCityName}}
+    <city-select :select-handler="deptSelectHandler" :source.sync="search.takeOffCityName" id="takeOffCityName" title="选择出发城市" ></city-select>{{takeOffCityName}}
     <span>到达城市</span>
-    <city-select :select-handler="arrSelectHandler" id="takeOnCityName" title="选择到达城市" ></city-select>{{takeOnCityName}}
+    <city-select :select-handler="arrSelectHandler" :source.sync="search.takeOnCityName" id="takeOnCityName" title="选择到达城市" ></city-select>{{takeOnCityName}}
     <button v-on:click="changeCity">交换</button>
 </div>
 
@@ -24,13 +24,13 @@
 
 
     var citySelt = Vue.extend({
-        template: '<input type="text" placeholder={{title}} v-model={{}} title={{title}}>',
+        template: '<input type="text" placeholder={{title}} v-model="source" title={{title}}>',
         props:{
-            "search":{
-                type:Object
+            source:{
+                type:String
             },
             "title":{
-               type:String
+                type:String
             },
             "selectHandler": {
                 type: Function
@@ -39,7 +39,7 @@
         ready(){
             let self = this;
             $(this.$el).citySelect({
-                setName:true
+                setName:false
             }).on("citySelect",function(event,name,code){
                 self.selectHandler(name,code);
             });
@@ -63,18 +63,21 @@
         },
         methods: {
             deptSelectHandler:function (name,code) {
+                this.source = name;
                 this.search.takeOffCityName = name;
                 this.search.takeOffCityCode = code;
+
             },
             arrSelectHandler:function (name,code) {
                 this.search.takeOnCityName = name;
                 this.search.takeOnCityCode = code;
+                this.source = name;
+
             },
             changeCity:function () {
-                var takeOffCityName = $("#takeOffCityName").val();
-                var arriveCityName = $("#takeOnCityName").val();
-                $("#takeOffCityName").val(arriveCityName);
-                $("#takeOnCityName").val(takeOffCityName);
+                var temp =  this.search.takeOffCityName;
+                this.search.takeOffCityName = this.search.takeOnCityName;
+                this.search.takeOnCityName = temp;
             }
         },
     })
