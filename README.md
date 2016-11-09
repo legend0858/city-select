@@ -1,4 +1,4 @@
-# citySelect 城市选择(依赖jquery并与angular结合)
+# citySelect 城市选择(依赖jquery并与angular、vue分别结合)
 插件特性
 ----------  
 1.单例  
