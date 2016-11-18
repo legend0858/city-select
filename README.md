@@ -100,7 +100,7 @@ var citySelt = Vue.extend({
 ![](http://7xi96x.com1.z0.glb.clouddn.com/kucity3.png)  
 ![](http://7xi96x.com1.z0.glb.clouddn.com/kucity4.png) 
  
- ## datepicker结合vue的使用说明
+## datepicker结合vue的使用说明
  ----
  
 一，依赖的插件（jquery,angular）
