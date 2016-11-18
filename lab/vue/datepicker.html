@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="vue/vue.min.js"></script>
+    <script type="text/javascript" src="vue/jquery.min.js"></script>
+    <script type="text/javascript" src="vue/jquery-datepicker.js"></script>
+    <link rel="stylesheet"  href="vue/jquery-ui.css">
+    <script type="text/javascript" src="vue/loadsh.js"></script>
+</head>
+<body id="demo">
+<label>出发日期</label>
+<datepicker v-ref:takeoffdate :value.sync="search.takeoffDate" :select-handler="changeTakeOffDate" title="结束日期" :options="dateOptions"></datepicker>
+<label>返程日期</label>
+<datepicker v-ref:returndate :value.sync="search.returnDate" :select-handler="changeReturnDate" title="结束日期" :options="dateOptions"></datepicker>
+</body>
+</html>
+<script>
+
+    var datepicker = Vue.extend({
+        template:'	<input type="text" class="form-control" :class="className" :disabled="disabled" placeholder="{{title}}" title="{{title}}" v-model="value">',
+        props: {
+            "className":String,
+            "title":{
+                type:String,
+                required:true
+            },
+            "value":{
+                required:true
+            },
+            "selectHandler":{
+                type: Function
+            },
+            "options":{
+                type: Object
+            },
+            "showYear":{
+                type: Boolean,
+                default : false
+            },
+            "disabled" : {
+                type : Boolean,
+                default : function(){
+                    return false;
+                }
+            },
+            "selected" : {
+                type : Date,
+                default : function(){
+                    return '';
+                }
+            }
+        },
+        methods:{
+            setStartDate:function(date) {//设置最小时间
+                $(this.$el).datepicker("option","minDate",date);
+            },
+            setEndDate:function(date) {//设置最大时间
+                $(this.$el).datepicker("option","maxDate",date);
+            },
+            setDefaultValue: function (date) {//设置默认值
+                $(this.$el).datepicker("setDate",date);
+                let current = $(this.$el).val();
+                this.value = current;
+            }
+        },
+        ready(){
+            let self = this;
+            $(this.$el).datepicker({
+                changeYear: self.showYear,
+                onSelect: function (selectedDate) {
+                    self.selectHandler && self.selectHandler(selectedDate);
+                    self.value = selectedDate;
+                }
+            });
+            if (self.showYear) {
+                let year = new Date().getFullYear();
+                $(this.$el).datepicker("option","yearRange",`1950:${year}`);
+            }
+            if (this.options){
+                _.forEach(this.options,function(value,key){
+                    $(self.$el).datepicker("option",key,value);
+                });
+            }
+        }
+    });
+    var demo = new Vue({
+        el:"#demo",
+        data() {
+            return {
+                search:{
+                   takeOffDate:"",
+                   returnDate:"",
+                },
+                dateOptions:{
+                    numberOfMonths:2,
+                    minDate:new Date()
+                }
+            };
+        },
+        methods: {
+            changeTakeOffDate:function(date){
+                this.$refs.returndate.setStartDate(date);
+            },
+            changeReturnDate:function(date){
+                if (this.$refs.returndate){
+                    this.$refs.takeoffdate.setEndDate(date);
+                }
+            },
+        },
+        watch:{
+            "search.takeOffDate":function (val) {
+                if (val===''||val===undefined){
+                    this.$refs.returndate.setEndDate(val);
+                }
+            },
+            "search.returnDate":function (val) {
+                if (val===''||val===undefined){
+                    this.$refs.takeoffdate.setStartDate(val);
+                }
+            },
+        },
+        components:{
+           datepicker
+        },
+        ready() {}
+    });
+</script>

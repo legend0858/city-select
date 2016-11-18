@@ -13,7 +13,7 @@
 <body>
 <div id="demo">
     <span>出发城市：</span>
-    <city-select :select-handler="deptSelectHandler" :source.sync="search.takeOffCityName" id="takeOffCityName" title="选择出发城市" ></city-select>{{takeOffCityName}}
+    <city-select :select-handler="deptSelectHandler" :source.sync="search.takeOffCityName" id="takeOffCityName" title="选择出发城市" ></city-select>
     <span>到达城市</span>
     <city-select :select-handler="arrSelectHandler" :source.sync="search.takeOnCityName" id="takeOnCityName" title="选择到达城市" ></city-select>{{takeOnCityName}}
     <button v-on:click="changeCity">交换</button>
