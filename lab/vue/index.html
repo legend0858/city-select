@@ -2,17 +2,77 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>Vue城市选择控件调研<title>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
+    <title>Vue城市选择控件调研</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="../../css/ku-city.css">
+    <script src="vue/vue.min.js"></script>
+    <script src="../../js/lib/jquery.min.js"></script>
+    <script src="../../js/city-info.js"></script>
+    <script src="../../js/city-select.js"></script>
 </head>
 <body>
-<div id="div1">
-    <input type="text" ng-model="cityCode" ku-city placeholder="城市选择控件">
-    <button type="button" ng-click="showInfo()">显示</button>
+<div id="demo">
+    <span>出发城市：</span>
+    <city-select :select-handler="deptSelectHandler" :source.sync="search.takeOffCityName" id="takeOffCityName" title="选择出发城市" ></city-select>
+    <span>到达城市</span>
+    <city-select :select-handler="arrSelectHandler" :source.sync="search.takeOnCityName" id="takeOnCityName" title="选择到达城市" ></city-select>{{takeOnCityName}}
+    <button v-on:click="changeCity">交换</button>
 </div>
 <script>
-    new Vue({
-        el:"div1"
+    var citySelt = Vue.extend({
+        template: '<input type="text" placeholder={{title}} v-model="source" title={{title}}>',
+        props:{
+            source:{
+                type:String
+            },
+            "title":{
+                type:String
+            },
+            "selectHandler": {
+                type: Function
+            },
+        },
+        ready(){
+            let self = this;
+            $(this.$el).citySelect({
+                setName:false
+            }).on("citySelect",function(event,name,code){
+                self.selectHandler(name,code);
+            });
+        }
+    })
+    Vue.component('city-select', citySelt);
+    var demo = new Vue({
+        el: '#demo',
+        data(){
+            return{
+                search:{
+                    takeOffCityName : "",
+                    takeOnCityName  : "",
+                    takeOffCityCode:"",
+                    takeOnCityCode:"",
+                }
+
+            }
+        },
+        watch:{
+        },
+        methods: {
+            deptSelectHandler:function (name,code) {
+                this.search.takeOffCityName = name;
+                this.search.takeOffCityCode = code;
+
+            },
+            arrSelectHandler:function (name,code) {
+                this.search.takeOnCityName = name;
+                this.search.takeOnCityCode = code;
+            },
+            changeCity:function () {
+                var temp =  this.search.takeOffCityName;
+                this.search.takeOffCityName = this.search.takeOnCityName;
+                this.search.takeOnCityName = temp;
+            }
+        },
     })
 </script>
 </body>
